@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inoSKS Firmware Flasher</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>SKS Firmware Flasher</h1>
+      <p class="subtitle">Flash the latest firmware to your SKS device.</p>
+    </header>
+
+    <section id="unsupported" hidden>
+      <div class="card warn">
+        <strong>Web Serial not supported.</strong>
+        <p>Please open this page in <b>Chrome</b>, <b>Edge</b>, or <b>Opera</b> on a desktop computer.</p>
+      </div>
+    </section>
+
+    <section id="app" hidden>
+      <div class="card">
+        <ol class="steps">
+          <li>Connect your SKS to your computer with a USB cable.</li>
+          <li>Click <b>Connect & Flash</b> and pick the device's serial port.</li>
+          <li>Wait until "Done" appears. Do not unplug during flashing.</li>
+        </ol>
+
+        <div class="row">
+          <button id="flashBtn" class="primary">Connect &amp; Flash</button>
+          <label class="upload">
+            <input type="file" id="customHex" accept=".hex" hidden />
+            <span>Use custom .hex</span>
+          </label>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress"><div id="bar"></div></div>
+          <div id="status">Idle</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="log-label">Log</div>
+        <pre id="log"></pre>
+      </div>
+
+      <details class="card">
+        <summary>Advanced</summary>
+        <label><input type="checkbox" id="verifyChk" checked /> Verify after flashing</label>
+        <label><input type="checkbox" id="wireLogChk" /> Log raw TX/RX bytes (debug)</label>
+        <label>Baud rate override (leave default unless you know you need to change it)
+          <select id="baud">
+            <option value="" selected>Use target default (115200)</option>
+            <option value="115200">115200</option>
+            <option value="57600">57600</option>
+            <option value="38400">38400</option>
+            <option value="19200">19200</option>
+          </select>
+        </label>
+        <input type="hidden" id="target" value="inoSKS" />
+      </details>
+    </section>
+  </main>
+
+  <script type="module" src="flasher.js"></script>
+</body>
+</html>
