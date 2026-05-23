@@ -300,7 +300,8 @@ async function flashFlow() {
 
 // ---------- Init ----------
 function init() {
-  if (!("serial" in navigator)) {
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile || !("serial" in navigator)) {
     $("unsupported").hidden = false;
     return;
   }
