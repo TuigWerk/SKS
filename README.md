@@ -1,6 +1,6 @@
-# inoSKS Web Flasher
+# SKS Web Flasher
 
-Browser-based firmware flasher for the inoSKS device (ATmega4809 + Optiboot via MegaCoreX).
+Browser-based firmware flasher for the SKS device (ATmega4809 + Optiboot via MegaCoreX).
 Uses the Web Serial API and STK500v1 — no installs required for the end user.
 
 ## Updating the bundled firmware
@@ -24,7 +24,7 @@ Web Serial works in **Chrome, Edge, and Opera** on desktop (Windows, macOS, Linu
 
 ## How it works
 
-1. Loads `firmware/inoSKS.hex`, parses Intel HEX into a flat flash image padded with `0xFF`.
+1. Loads `firmware/inoSKS.hex` (the bundled SKS firmware), parses Intel HEX into a flat flash image padded with `0xFF`.
 2. Asks the user to pick the device's serial port (`navigator.serial.requestPort()`).
 3. Opens the port at 115200 8N1 and toggles **DTR** (or **RTS** if configured) to trigger Optiboot's auto-reset.
 4. Speaks STK500v1: sync → enter prog mode → load address + program page (128 B) loop → optional read-back verify → leave prog mode.

@@ -1,15 +1,15 @@
-// inoSKS web flasher — STK500v1 over Web Serial.
+// SKS web flasher — STK500v1 over Web Serial.
 // Default target: ATmega4809 + Optiboot (MegaCoreX). Also supports classic Arduino Nano.
 
 const PAGE_SIZE = 128;          // Both targets use 128-byte pages
 
 const TARGETS = {
-  inoSKS: {
-    label: "inoSKS (ATmega4809)",
+  SKS: {
+    label: "SKS (ATmega4809)",
     firmware: "firmware/inoSKS.hex",
     baud: 115200,
     flashSize: 48 * 1024,        // ATmega4809: 48 KB flash
-    // Single DTR pulse is enough for the inoSKS USB-serial bridge
+    // Single DTR pulse is enough for the SKS USB-serial bridge
     reset: { dtr: true, rts: false, holdMs: 100, settleMs: 100 },
   },
 };
