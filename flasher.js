@@ -61,7 +61,7 @@ function parseIntelHex(text, flashSize) {
   let highest = 0;
   const chunks = [];
   for (const line of lines) {
-    if (line.length < 11) throw new Error("HEX line too short");
+    if (line.length < 11) throw new Error("HEX-regel te kort");
     const bytes = [];
     for (let i = 1; i < line.length; i += 2) bytes.push(parseInt(line.substr(i, 2), 16));
     const len = bytes[0];
@@ -70,7 +70,7 @@ function parseIntelHex(text, flashSize) {
     const data = bytes.slice(4, 4 + len);
     const checksum = bytes[4 + len];
     const sum = bytes.slice(0, 4 + len).reduce((a, b) => (a + b) & 0xff, 0);
-    if (((~sum + 1) & 0xff) !== checksum) throw new Error("HEX checksum mismatch");
+    if (((~sum + 1) & 0xff) !== checksum) throw new Error("HEX-controlegetal klopt niet");
     if (type === 0x00) {
       const fullAddr = extLinear * 0x10000 + extSeg * 16 + addr;
       chunks.push({ addr: fullAddr, data });
@@ -86,7 +86,7 @@ function parseIntelHex(text, flashSize) {
   }
   // Round up to page boundary
   const size = Math.ceil(highest / PAGE_SIZE) * PAGE_SIZE;
-  if (size > flashSize) throw new Error(`Firmware (${size}B) exceeds available flash (${flashSize}B)`);
+  if (size > flashSize) throw new Error(`Firmware (${size}B) overschrijdt beschikbaar flash (${flashSize}B)`);
   const image = new Uint8Array(size).fill(0xff);
   for (const c of chunks) image.set(c.data, c.addr);
   return image;
@@ -131,7 +131,7 @@ class SerialIO {
   async read(n, timeoutMs = 1500) {
     const deadline = performance.now() + timeoutMs;
     while (this.buf.length < n) {
-      if (performance.now() > deadline) throw new Error(`Read timeout (got ${this.buf.length}/${n})`);
+      if (performance.now() > deadline) throw new Error(`Leestime-out (ontvangen ${this.buf.length}/${n})`);
       await new Promise((r) => setTimeout(r, 5));
     }
     return this.buf.splice(0, n);
@@ -189,7 +189,7 @@ async function sync(io) {
       await new Promise((r) => setTimeout(r, 5));
     }
   }
-  throw new Error("Could not sync with bootloader. Check the cable, board, and reset line.");
+  throw new Error("Kon niet synchroniseren met de bootloader. Controleer de kabel, het bord en de resetlijn.");
 }
 
 // Tight request/response with no logging or computation between writes.
@@ -206,7 +206,7 @@ async function txrx(io, payload, bodyLen = 0, timeoutMs = 2000) {
 
 async function flash(io, image, verify, onProgress) {
   const pages = image.length / PAGE_SIZE;
-  const imageSizeMsg = `Image: ${image.length} bytes (${pages} pages)`;
+  const imageSizeMsg = `Afbeelding: ${image.length} bytes (${pages} pagina's)`;
 
   // --- Critical section: no logging, no DOM writes between commands. ---
   io.drain();
@@ -233,7 +233,7 @@ async function flash(io, image, verify, onProgress) {
       const got = await txrx(io, [STK.READ_PAGE, 0x00, PAGE_SIZE, 0x46], PAGE_SIZE);
       for (let i = 0; i < PAGE_SIZE; i++) {
         if (got[i] !== image[byteAddr + i]) {
-          throw new Error(`Verify failed at 0x${(byteAddr + i).toString(16)}: wrote 0x${image[byteAddr + i].toString(16)}, read 0x${got[i].toString(16)}`);
+          throw new Error(`Verificatie mislukt op 0x${(byteAddr + i).toString(16)}: geschreven 0x${image[byteAddr + i].toString(16)}, gelezen 0x${got[i].toString(16)}`);
         }
       }
       onProgress(0.5 + (p + 1) / pages * 0.5);
@@ -244,18 +244,18 @@ async function flash(io, image, verify, onProgress) {
   // --- End critical section. Logging is safe again. ---
 
   log(imageSizeMsg);
-  log("Flash + " + (verify ? "verify " : "") + "complete");
+  log("Flashen + " + (verify ? "verificatie " : "") + "voltooid");
 }
 
 // ---------- Orchestration ----------
 async function loadFirmware(file, target) {
   if (file) {
-    log(`Using uploaded file: ${file.name}`);
+    log(`Gebruik geüpload bestand: ${file.name}`);
     return parseIntelHex(await file.text(), target.flashSize);
   }
-  log(`Fetching ${target.firmware}...`);
+  log(`Ophalen van ${target.firmware}...`);
   const res = await fetch(target.firmware);
-  if (!res.ok) throw new Error(`Could not load firmware (${res.status}). Make sure ${target.firmware} exists.`);
+  if (!res.ok) throw new Error(`Kon firmware niet laden (${res.status}). Zorg ervoor dat ${target.firmware} bestaat.`);
   return parseIntelHex(await res.text(), target.flashSize);
 }
 
@@ -263,36 +263,36 @@ async function flashFlow() {
   const btn = $("flashBtn");
   btn.disabled = true;
   setProgress(0);
-  setStatus("Loading firmware...");
+  setStatus("Firmware laden...");
   try {
     const target = TARGETS[$("target").value];
-    log(`Target: ${target.label}`);
+    log(`Doel: ${target.label}`);
     const image = await loadFirmware($("customHex").files[0], target);
-    setStatus("Select your device's serial port...");
+    setStatus("Selecteer de seriële poort van je apparaat...");
     const port = await navigator.serial.requestPort();
     const io = new SerialIO(port);
     const baudOverride = parseInt($("baud").value, 10);
     const baud = Number.isFinite(baudOverride) ? baudOverride : target.baud;
     await io.open(baud);
-    log(`Port opened at ${baud} baud`);
+    log(`Poort geopend op ${baud} baud`);
 
-    setStatus("Resetting into bootloader...");
+    setStatus("Resetten naar bootloader...");
     await io.setReset(target.reset);
 
-    setStatus("Flashing...");
+    setStatus("Flashen...");
     await flash(io, image, $("verifyChk").checked, (frac) => {
       setProgress(frac * 100);
-      setStatus(`Flashing... ${Math.round(frac * 100)}%`);
+      setStatus(`Flashen... ${Math.round(frac * 100)}%`);
     });
 
     await io.close();
     setProgress(100);
-    setStatus("Done! Your device will restart.", "good");
-    log("All done.");
+    setStatus("Klaar! Je apparaat wordt opnieuw opgestart.", "good");
+    log("Alles klaar.");
   } catch (e) {
     console.error(e);
-    setStatus(`Error: ${e.message}`, "bad");
-    log(`ERROR: ${e.message}`);
+    setStatus(`Fout: ${e.message}`, "bad");
+    log(`FOUT: ${e.message}`);
   } finally {
     btn.disabled = false;
   }

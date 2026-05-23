@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,35 +11,36 @@
     <header>
       <img src="SKS%20Logo.png" alt="SKS logo" class="logo" />
       <h1>SKS Firmware Flasher</h1>
-      <p class="subtitle">Flash the latest firmware to your SKS device.</p>
+      <p class="subtitle">Flash de nieuwste firmware naar je SKS apparaat.</p>
     </header>
 
     <section id="unsupported" hidden>
       <div class="card warn">
-        <strong>Web Serial not supported.</strong>
-        <p>Please open this page in <b>Chrome</b>, <b>Edge</b>, or <b>Opera</b> on a desktop computer.</p>
+        <strong>Web Serial wordt niet ondersteund.</strong>
+        <p>Open deze pagina in <b>Chrome</b>, <b>Edge</b> of <b>Opera</b> op een desktopcomputer.</p>
       </div>
     </section>
 
     <section id="app" hidden>
       <div class="card">
         <ol class="steps">
-          <li>Connect your SKS to your computer with a USB cable.</li>
-          <li>Click <b>Connect & Flash</b> and pick the device's serial port.</li>
-          <li>Wait until "Done" appears. Do not unplug during flashing.</li>
+          <li>Verbind je SKS Trigger of Foedraal met je computer via een USB-kabel.</li>
+          <li>Klik op <b>Verbinden &amp; Flashen</b> en kies de seriële poort van het apparaat.</li>
+          <li>Wacht tot "Klaar" verschijnt. Verwijder de kabel niet tijdens het flashen.</li>
+          <li>Wanneer het eerste apparaat klaar is, koppel het los en herhaal hetzelfde proces met het andere apparaat.</li>
         </ol>
 
         <div class="row">
-          <button id="flashBtn" class="primary">Connect &amp; Flash</button>
+          <button id="flashBtn" class="primary">Verbinden &amp; Flashen</button>
           <label class="upload">
             <input type="file" id="customHex" accept=".hex" hidden />
-            <span>Use custom .hex</span>
+            <span>Gebruik eigen .hex</span>
           </label>
         </div>
 
         <div class="progress-wrap">
           <div class="progress"><div id="bar"></div></div>
-          <div id="status">Idle</div>
+          <div id="status">Inactief</div>
         </div>
       </div>
 
@@ -49,12 +50,12 @@
       </div>
 
       <details class="card">
-        <summary>Advanced</summary>
-        <label><input type="checkbox" id="verifyChk" checked /> Verify after flashing</label>
-        <label><input type="checkbox" id="wireLogChk" /> Log raw TX/RX bytes (debug)</label>
-        <label>Baud rate override (leave default unless you know you need to change it)
+        <summary>Geavanceerd</summary>
+        <label><input type="checkbox" id="verifyChk" checked /> Verifieer na het flashen</label>
+        <label><input type="checkbox" id="wireLogChk" /> Log ruwe TX/RX bytes (debug)</label>
+        <label>Baudrate overschrijven (laat standaard tenzij je weet dat je dit moet wijzigen)
           <select id="baud">
-            <option value="" selected>Use target default (115200)</option>
+            <option value="" selected>Gebruik standaard (115200)</option>
             <option value="115200">115200</option>
             <option value="57600">57600</option>
             <option value="38400">38400</option>
