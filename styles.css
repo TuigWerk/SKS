@@ -13,7 +13,7 @@
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 main { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
 header { text-align: center; }
-.logo { max-height: 160px; width: auto; margin-bottom: 12px; display: block; margin-inline: auto; }
+.logo { max-height: 80px; width: auto; margin-bottom: 12px; display: block; margin-inline: auto; }
 header h1 { margin: 0 0 4px; font-size: 28px; }
 .subtitle { color: var(--muted); margin: 0 0 24px; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
